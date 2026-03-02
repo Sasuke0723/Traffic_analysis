@@ -1,0 +1,120 @@
+# Windows 系统生成的文件
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# 编译输出与临时文件
+*.exe
+*.dll
+*.so
+*.dylib
+*.obj
+*.lib
+*.pdb
+*.ilk
+*.exp
+*.idb
+*.tlog
+*.lastbuildstate
+*.pch
+*.res
+*.sbr
+*.ipch
+*.opendb
+*.db
+*.db-shm
+*.db-wal
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.ncb
+*.aps
+*.tmp
+*.log
+*.tlb
+*.tlh
+*.bak
+*.vs/
+
+# Visual Studio 相关
+.vs/
+.vscode/
+*.csproj.user
+*.vbproj.user
+*.vcxproj.filters
+*.vcxproj.user
+*.vcxproj.FileListAbsolute.txt
+ipch/
+Debug/
+Release/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+
+# Visual Studio Code 配置（如果你在 Windows 下使用 VS Code）
+.vscode/
+*.code-workspace
+
+# Rider / JetBrains IDE
+.idea/
+*.sln.iml
+
+# 用户特定文件
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet 包
+packages/
+*.nupkg
+
+# 发布目录
+publish/
+*.publish.xml
+
+# 数据库与日志文件
+*.mdf
+*.ldf
+*.log
+*.err
+
+# Python（如果在 Windows 下使用 Python）
+__pycache__/
+*.py[cod]
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv.*
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Node.js（如果在 Windows 下使用 Node）
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Windows 快捷方式
+*.lnk
+
+# 其他常见忽略
+*.swp
+*.swo
+*~
+.DS_Store
