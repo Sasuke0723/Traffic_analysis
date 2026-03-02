@@ -1,16 +1,22 @@
+#include "utils.h"
+#include "data_structure.h"
+#include "csv_reader.h"
+#include "graph_builder.h"
 #include "traffic_sort.h"
+#include "path_finder.h"
 
-// 基础菜单交互
 void showMenu() {
-    printf("\n===== 网络流量分析与异常检测系统 =====\n");
-    printf("1. 读取CSV流量数据\n");
-    printf("2. 查看图结构信息\n");
-    printf("3. 节点总流量排序\n");
-    printf("4. HTTPS节点流量排序\n");
-    printf("5. 单向发送占比>80%节点排序\n");
-    printf("0. 退出系统\n");
-    printf("=======================================\n");
-    printf("请输入功能编号：");
+    printf("\n===== Network Traffic Analysis System =====\n");
+    printf("1. Read CSV Traffic Data\n");
+    printf("2. View Graph Info\n");
+    printf("3. Sort Nodes by Total Traffic\n");
+    printf("4. Sort HTTPS Nodes\n");
+    printf("5. Sort Nodes with Send Ratio >80%%\n");
+    // 新增路径查找选项
+    printf("6. Find Min Hop/Min Congestion Path\n");
+    printf("0. Exit System\n");
+    printf("===========================================\n");
+    printf("Please enter function number: ");
 }
 
 int main() {
@@ -32,15 +38,15 @@ int main() {
 
         switch (choice) {
             case 1:
-                printf("请输入CSV文件路径（默认：test_data.csv）：");
+                printf("Enter CSV file path (default: test_data.csv): ");
                 char input[256];
                 fgets(input, 256, stdin);
                 input[strcspn(input, "\n\r")] = '\0';
                 if (strlen(input) > 0) strcpy(csv_path, input);
                 if (readCsv(csv_path, graph) == SUCCESS) {
-                    printf("数据读取成功！\n");
+                    printf("Data read successfully!\n");
                 } else {
-                    printf("数据读取失败！\n");
+                    printf("Data read failed!\n");
                 }
                 break;
 
@@ -54,7 +60,7 @@ int main() {
                     free(sorted_result);
                     sorted_result = NULL;
                 } else {
-                    printf("总流量排序失败！\n");
+                    printf("Total traffic sort failed!\n");
                 }
                 break;
 
@@ -64,7 +70,7 @@ int main() {
                     free(sorted_result);
                     sorted_result = NULL;
                 } else {
-                    printf("HTTPS节点排序失败！\n");
+                    printf("HTTPS node sort failed!\n");
                 }
                 break;
 
@@ -74,22 +80,40 @@ int main() {
                     free(sorted_result);
                     sorted_result = NULL;
                 } else {
-                    printf("单向发送占比排序失败！\n");
+                    printf("Send ratio sort failed!\n");
+                }
+                break;
+
+            case 6:
+                char start_ip[MAX_IP_LEN], end_ip[MAX_IP_LEN];
+                printf("Enter start IP address: ");
+                scanf("%s", start_ip);
+                printf("Enter end IP address: ");
+                scanf("%s", end_ip);
+                getchar(); // 吸收换行符
+
+                PathResult min_hop, min_cong;
+                if (findPaths(graph, start_ip, end_ip, &min_hop, &min_cong) == SUCCESS) {
+                    printPathResult(start_ip, end_ip, &min_hop, &min_cong);
+                    freePathResult(&min_hop);
+                    freePathResult(&min_cong);
+                } else {
+                    printf("No path found between %s and %s!\n", start_ip, end_ip);
                 }
                 break;
 
             case 0:
-                printf("正在退出系统...\n");
+                printf("Exiting system...\n");
                 break;
 
             default:
-                printf("无效的功能编号，请重新输入！\n");
+                printf("Invalid function number, please re-enter!\n");
                 break;
         }
     }
 
     // 释放资源
     freeGraph(graph);
-    printf("系统退出成功！\n");
+    printf("System exited successfully!\n");
     return 0;
 }

@@ -1,4 +1,5 @@
 #include "csv_reader.h"
+#include "graph_builder.h"
 
 // 分割CSV行（按逗号分割），返回字段数
 static int splitCsvLine(char *line, char **fields, int max_fields) {
