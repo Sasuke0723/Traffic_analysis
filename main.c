@@ -4,6 +4,8 @@
 #include "graph_builder.h"
 #include "traffic_sort.h"
 #include "path_finder.h"
+#include "star_topology.h"
+#include "security_rule.h"
 
 void showMenu() {
     printf("\n===== Network Traffic Analysis System =====\n");
@@ -12,10 +14,11 @@ void showMenu() {
     printf("3. Sort Nodes by Total Traffic\n");
     printf("4. Sort HTTPS Nodes\n");
     printf("5. Sort Nodes with Send Ratio >80%%\n");
-    // 新增路径查找选项
     printf("6. Find Min Hop/Min Congestion Path\n");
+    printf("7. Detect Star Topology\n");          // 新增
+    printf("8. Detect Security Violations\n");   // 新增
     printf("0. Exit System\n");
-    printf("===========================================\n");
+    printf("==========================================\n");
     printf("Please enter function number: ");
 }
 
@@ -101,6 +104,71 @@ int main() {
                     printf("No path found between %s and %s!\n", start_ip, end_ip);
                 }
                 break;
+            case 7: {
+                int min_edge_count = 20; // 默认中心节点最小边数
+                printf("Enter min edge count for center node (default 20): ");
+                char input[16];
+                fgets(input, 16, stdin);
+                input[strcspn(input, "\n\r")] = '\0';
+                if (strlen(input) > 0) min_edge_count = atoi(input);
+                
+                StarTopology *star_result = NULL;
+                if (detectStarTopology(graph, min_edge_count, &star_result) == SUCCESS) {
+                    printStarTopology(star_result);
+                    freeStarTopology(star_result);
+                } else {
+                    printf("Star topology detection failed or no topology found!\n");
+                }
+                break;
+            }
+            case 8: {
+                // 初始化安全规则（支持动态扩展）
+                SecurityRule rules[10];
+                int rule_count = 0;
+
+                // 规则1：IP范围阻断（192.168.0.1 - 192.168.0.255）
+                SecurityRule rule1 = {
+                    .type = RULE_IP_RANGE_BLOCK,
+                    .rule_name = "IP_RANGE_BLOCK_192.168.0.x",
+                    .ip_range = {"192.168.0.1", "192.168.0.255"},
+                    .proto_id = 0,
+                    .port = 0,
+                    .threshold = 0
+                };
+                addSecurityRule(rules, &rule_count, rule1);
+
+                // 规则2：TCP协议限流（流量>1000）
+                SecurityRule rule2 = {
+                    .type = RULE_PROTOCOL_LIMIT,
+                    .rule_name = "TCP_TRAFFIC_LIMIT_1000",
+                    .ip_range = {"", ""},
+                    .proto_id = 6,
+                    .port = 0,
+                    .threshold = 1000
+                };
+                addSecurityRule(rules, &rule_count, rule2);
+
+                // 规则3：端口445阻断（SMB端口）
+                SecurityRule rule3 = {
+                    .type = RULE_PORT_BLOCK,
+                    .rule_name = "PORT_BLOCK_445",
+                    .ip_range = {"", ""},
+                    .proto_id = 0,
+                    .port = 445,
+                    .threshold = 0
+                };
+                addSecurityRule(rules, &rule_count, rule3);
+
+                // 检测违规会话
+                ViolationSession *violations = NULL;
+                if (detectViolationSessions(graph, rules, rule_count, &violations) == SUCCESS) {
+                    printViolationSessions(violations);
+                    freeViolationSessions(violations);
+                } else {
+                    printf("Security violation detection failed or no violations found!\n");
+                }
+                break;
+            }
 
             case 0:
                 printf("Exiting system...\n");
